@@ -22,9 +22,9 @@ bundle
 
 # Run the ruby console
 ./bin/console
-=> service = ServicePatterns::ChargeSubscriptionService.call({ email: "foo@example.com" })
-=> service.success? # true
-=> service.amount # 50
+=> result = ServicePatterns::ChargeSubscriptionService.call({ email: "foo@example.com" })
+=> result.success? # true
+=> result.amount # 50
 ```
 
 Using an interactor from a Rails controller:
