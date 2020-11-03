@@ -1,40 +1,62 @@
 # ServicePatterns
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/service_patterns`. To experiment with that code, run `bin/console` for an interactive prompt.
+How the [`interactor`](https://github.com/collectiveidea/interactor-rails) gem can help solve our service object woes.
 
-TODO: Delete this and the text above, and describe your gem
+The `Interactor` module abstracts away much of the boilerplate repeated for our service objects. It also fits into our single-method, single-responsibility service object ideology. In addition to less repeated code, here's a rundown of the major benefits:
 
-## Installation
+- [x] Go-style error messaging between internal services.
+- [x] Compose services and call them in order with `Organizer`s.
+- [x] Share state between successive service calls via `#context`.
+- [x] Hooks API to perform computations during service lifecycle.
+- [x] Easy and consistent testing.
 
-Add this line to your application's Gemfile:
+## Example
 
-```ruby
-gem 'service_patterns'
+Using an interactor from a controller:
+
+```rb
+def charge
+  response = ChargeSubscriptionService.call({ email: "foo@example.com" })
+
+  if response.success?
+    render json: response
+  else
+    raise response.errors
+  end
+end
 ```
 
-And then execute:
+Testing interactors:
 
-    $ bundle install
+```rb
+describe ChargeSubscriptionService do
+  let(:email)   { "foo@foo.com" }
+  let(:context) { ChargeSubscriptionService.call(email: email) }
 
-Or install it yourself as:
+  describe "#call" do
+    context "valid email" do
+      let(:email) { "foo@foo.com" }
 
-    $ gem install service_patterns
+      it "succeeds" do
+        expect(context).to be_a_success
+      end
 
-## Usage
+      it "charges the card" do
+        expect(context.amount).to eq(50)
+      end
+    end
 
-TODO: Write usage instructions here
+    context "invalid email" do
+      let(:email) {}
 
-## Development
+      it "fails" do
+        expect(context).to be_a_failure
+      end
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/service_patterns.
-
-
-## License
-
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+      it "provides error message" do
+        expect(context.errors).to be_present
+      end
+    end
+  end
+end
+```

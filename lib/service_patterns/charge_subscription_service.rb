@@ -29,6 +29,8 @@ module ServicePatterns
     organize ChargeCardService, SendEmailService
   end
 
+  # Compare the above to our current pattern:
+  #
   # class ChargeSubscriptionService
   #   attr_accessor :email
 
