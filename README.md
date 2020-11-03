@@ -19,9 +19,9 @@ def charge
   response = ChargeSubscriptionService.call({ email: "foo@example.com" })
 
   if response.success?
-    render json: response
+    render json: { message: "Charged #{response.amount} to card." }
   else
-    raise response.errors
+    render json: { errors: response.errors }
   end
 end
 ```
