@@ -1,6 +1,6 @@
 RSpec.describe ServicePatterns::ChargeSubscriptionService do
   let(:email)   { "foo@foo.com" }
-  let(:context) { ServicePatterns::ChargeSubscriptionService.call(email: email) }
+  let(:context) { described_class.call(email: email) }
 
   describe "#call" do
     context "valid email" do
