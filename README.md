@@ -1,8 +1,10 @@
-# ServicePatterns
+# Interactors for better services
 
 How the [`interactor`](https://github.com/collectiveidea/interactor-rails) gem can help solve our service object woes.
 
-The `Interactor` module abstracts away much of the boilerplate repeated for our service objects. It also fits into our single-method, single-responsibility service object ideology. In addition to less repeated code, here's a rundown of the major benefits:
+`Interactor` is a drop-in module that abstracts away much of the service object boilerplate. Just like with our current service pattern in Beacons, interactors define a `#call` method that provides the single entry point to the service. However, unlike our current services, interactors also provide a standardized approach to handling errors, responses, and composition.
+
+Here's a rundown of the major features `Interactor` provides:
 
 - [x] Go-style error messaging between internal services.
 - [x] Compose services and call them in order with `Organizer`s.
@@ -10,9 +12,22 @@ The `Interactor` module abstracts away much of the boilerplate repeated for our 
 - [x] Hooks API to perform computations during service lifecycle.
 - [x] Easy and consistent testing.
 
-## Example
+## Examples
 
-Using an interactor from a controller:
+View the example code in `/lib/service_patterns/charge_subscription_service.rb`.
+
+```
+# Configure packages
+bundle
+
+# Run the ruby console
+./bin/console
+=> service = ServicePatterns::ChargeSubscriptionService.call({ email: "foo@example.com" })
+=> service.success? # true
+=> service.amount # 50
+```
+
+Using an interactor from a Rails controller:
 
 ```rb
 def charge
